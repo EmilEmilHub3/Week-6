@@ -54,7 +54,7 @@ jobs:
             --project "Calculator/Calculator.csproj" \
             --test-project "Tests/Tests.csproj" \
             --reporter "html" \
-            --threshold-break 80 \
+            --threshold-high 80 \
             --output "StrykerOutput" || true
 
       - name: Collect Coverage Report
