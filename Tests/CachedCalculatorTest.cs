@@ -67,4 +67,25 @@ public class CachedCalculatorTest
         Assert.That(result, Is.True);
         Assert.That(calc._cache.ContainsKey("13IsPrime"), Is.True);
     }
+
+    [Test]
+    public void Multiply_SecondCall_DoesNotAddNewCacheEntry()
+    {
+        // Arrange
+        var calc = new CachedCalculator();
+        var a = 4;
+        var b = 3;
+
+        // Act
+        calc.Multiply(a, b);
+        var countAfterFirst = calc._cache.Count;
+
+        calc.Multiply(a, b);
+        var countAfterSecond = calc._cache.Count;
+
+        // Assert
+        Assert.That(countAfterSecond, Is.EqualTo(countAfterFirst));
+        Assert.That(calc._cache.ContainsKey("4Multiply3"), Is.True);
+    }
+
 }

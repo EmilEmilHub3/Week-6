@@ -162,4 +162,61 @@ public class SimpleCalculatorTest
         // Assert
         Assert.That(result, Is.True);
     }
+
+    [Test]
+    public void IsPrime_Two()
+    {
+        // Arrange
+        var calc = new SimpleCalculator();
+        var candidate = 2;
+
+        // Act
+        var result = calc.IsPrime(candidate);
+
+        // Assert
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public void IsPrime_PerfectSquare()
+    {
+        // Arrange
+        var calc = new SimpleCalculator();
+        var candidate = 49;
+
+        // Act
+        var result = calc.IsPrime(candidate);
+
+        // Assert
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void Factorial_One()
+    {
+        // Arrange
+        var calc = new SimpleCalculator();
+        var n = 1;
+
+        // Act
+        var result = calc.Factorial(n);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Factorial_Two()
+    {
+        // Arrange
+        var calc = new SimpleCalculator();
+        var n = 2;
+
+        // Act
+        var result = calc.Factorial(n);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(2));
+    }
+
 }
