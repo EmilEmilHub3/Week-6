@@ -8,11 +8,12 @@ on:
 jobs:
   integration:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -25,11 +26,20 @@ jobs:
           dotnet tool install --global dotnet-stryker
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Run unit tests
+      - name: Run unit tests (with coverage)
         continue-on-error: true
-        run: dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
+        run: |
+          dotnet test \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
 
-      - name: Generate report
+      - name: Ensure report folders exist
+        if: always()
+        run: |
+          mkdir -p CoverageReport
+          mkdir -p StrykerOutput
+
+      - name: Generate coverage report
         if: always()
         run: |
           reportgenerator \
@@ -44,7 +54,8 @@ jobs:
             --project "Calculator/Calculator.csproj" \
             --test-project "Tests/Tests.csproj" \
             --reporter "html" \
-            --threshold-break 80 || true
+            --threshold-break 80 \
+            --output "StrykerOutput" || true
 
       - name: Collect Coverage Report
         if: always()
