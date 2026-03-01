@@ -48,7 +48,6 @@ jobs:
             -reporttypes:Html
 
       - name: Run Mutation Tests
-        continue-on-error: true
         run: |
           dotnet stryker \
             --project "Calculator/Calculator.csproj" \
