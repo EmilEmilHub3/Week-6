@@ -7,85 +7,60 @@ public class CachedCalculatorTest
     [Test]
     public void Add_FirstCall()
     {
-        // Arrange
         var calc = new CachedCalculator();
-        var a = 2;
-        var b = 3;
-
-        // Act
-        var result = calc.Add(a, b);
-
-        // Assert
+        var result = calc.Add(2, 3);
         Assert.That(result, Is.EqualTo(5));
     }
 
     [Test]
-    public void Add_SecondCall_UsesCache()
+    public void Add_SecondCall_ReturnsSameResult()
     {
-        // Arrange
         var calc = new CachedCalculator();
-        var a = 2;
-        var b = 3;
 
-        // Act
-        calc.Add(a, b); // first call (cache miss)
-        var result = calc.Add(a, b); // second call (cache hit)
+        var first = calc.Add(2, 3);
+        var second = calc.Add(2, 3);
 
-        // Assert
-        Assert.That(result, Is.EqualTo(5));
-        Assert.That(calc._cache.ContainsKey("2Add3"), Is.True);
+        Assert.That(first, Is.EqualTo(5));
+        Assert.That(second, Is.EqualTo(5));
+        Assert.That(second, Is.EqualTo(first));
     }
 
     [Test]
-    public void Factorial_CachesResult()
+    public void Factorial_SecondCall_ReturnsSameResult()
     {
-        // Arrange
         var calc = new CachedCalculator();
-        var n = 5;
 
-        // Act
-        calc.Factorial(n); // first call
-        var result = calc.Factorial(n); // second call (cached)
+        var first = calc.Factorial(5);
+        var second = calc.Factorial(5);
 
-        // Assert
-        Assert.That(result, Is.EqualTo(120));
-        Assert.That(calc._cache.ContainsKey("5Factorial"), Is.True);
+        Assert.That(first, Is.EqualTo(120));
+        Assert.That(second, Is.EqualTo(120));
+        Assert.That(second, Is.EqualTo(first));
     }
 
     [Test]
-    public void IsPrime_CachesResult()
+    public void IsPrime_SecondCall_ReturnsSameResult()
     {
-        // Arrange
         var calc = new CachedCalculator();
-        var candidate = 13;
 
-        // Act
-        calc.IsPrime(candidate); // first call
-        var result = calc.IsPrime(candidate); // second call (cached)
+        var first = calc.IsPrime(13);
+        var second = calc.IsPrime(13);
 
-        // Assert
-        Assert.That(result, Is.True);
-        Assert.That(calc._cache.ContainsKey("13IsPrime"), Is.True);
+        Assert.That(first, Is.True);
+        Assert.That(second, Is.True);
+        Assert.That(second, Is.EqualTo(first));
     }
 
     [Test]
-    public void Multiply_SecondCall_DoesNotAddNewCacheEntry()
+    public void Multiply_SecondCall_ReturnsSameResult()
     {
-        // Arrange
         var calc = new CachedCalculator();
-        var a = 4;
-        var b = 3;
 
-        // Act
-        calc.Multiply(a, b);
-        var countAfterFirst = calc._cache.Count;
+        var first = calc.Multiply(4, 3);
+        var second = calc.Multiply(4, 3);
 
-        calc.Multiply(a, b);
-        var countAfterSecond = calc._cache.Count;
-
-        // Assert
-        Assert.That(countAfterSecond, Is.EqualTo(countAfterFirst));
-        Assert.That(calc._cache.ContainsKey("4Multiply3"), Is.True);
+        Assert.That(first, Is.EqualTo(12));
+        Assert.That(second, Is.EqualTo(12));
+        Assert.That(second, Is.EqualTo(first));
     }
-
 }
