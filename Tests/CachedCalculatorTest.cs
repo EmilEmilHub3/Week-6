@@ -9,6 +9,7 @@ public class CachedCalculatorTest
     {
         var calc = new CachedCalculator();
         var result = calc.Add(2, 3);
+
         Assert.That(result, Is.EqualTo(5));
     }
 
@@ -20,9 +21,12 @@ public class CachedCalculatorTest
         var first = calc.Add(2, 3);
         var second = calc.Add(2, 3);
 
-        Assert.That(first, Is.EqualTo(5));
-        Assert.That(second, Is.EqualTo(5));
-        Assert.That(second, Is.EqualTo(first));
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.EqualTo(5));
+            Assert.That(second, Is.EqualTo(5));
+            Assert.That(second, Is.EqualTo(first));
+        });
     }
 
     [Test]
@@ -33,9 +37,12 @@ public class CachedCalculatorTest
         var first = calc.Factorial(5);
         var second = calc.Factorial(5);
 
-        Assert.That(first, Is.EqualTo(120));
-        Assert.That(second, Is.EqualTo(120));
-        Assert.That(second, Is.EqualTo(first));
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.EqualTo(120));
+            Assert.That(second, Is.EqualTo(120));
+            Assert.That(second, Is.EqualTo(first));
+        });
     }
 
     [Test]
@@ -46,9 +53,12 @@ public class CachedCalculatorTest
         var first = calc.IsPrime(13);
         var second = calc.IsPrime(13);
 
-        Assert.That(first, Is.True);
-        Assert.That(second, Is.True);
-        Assert.That(second, Is.EqualTo(first));
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.True);
+            Assert.That(second, Is.True);
+            Assert.That(second, Is.EqualTo(first));
+        });
     }
 
     [Test]
@@ -59,8 +69,11 @@ public class CachedCalculatorTest
         var first = calc.Multiply(4, 3);
         var second = calc.Multiply(4, 3);
 
-        Assert.That(first, Is.EqualTo(12));
-        Assert.That(second, Is.EqualTo(12));
-        Assert.That(second, Is.EqualTo(first));
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.EqualTo(12));
+            Assert.That(second, Is.EqualTo(12));
+            Assert.That(second, Is.EqualTo(first));
+        });
     }
 }
