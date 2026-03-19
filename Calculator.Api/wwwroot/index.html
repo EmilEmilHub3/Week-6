@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Calculator Frontend</title>
+</head>
+<body>
+    <h1>Calculator</h1>
+
+    <div>
+        <label for="a">A:</label>
+        <input id="a" type="number" />
+    </div>
+
+    <div>
+        <label for="b">B:</label>
+        <input id="b" type="number" />
+    </div>
+
+    <div>
+        <label for="operation">Operation:</label>
+        <select id="operation">
+            <option value="add">Add</option>
+            <option value="subtract">Subtract</option>
+            <option value="multiply">Multiply</option>
+            <option value="divide">Divide</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="calculatorType">Calculator:</label>
+        <select id="calculatorType">
+            <option value="simple">SimpleCalculator</option>
+            <option value="cached">CachedCalculator</option>
+        </select>
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <h2 id="result"></h2>
+
+    <script>
+        async function calculate() {
+            const a = parseInt(document.getElementById("a").value);
+            const b = parseInt(document.getElementById("b").value);
+            const operation = document.getElementById("operation").value;
+            const calculatorType = document.getElementById("calculatorType").value;
+
+            const response = await fetch("/api/calculations", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    a,
+                    b,
+                    operation,
+                    calculatorType
+                })
+            });
+
+            if (!response.ok) {
+                document.getElementById("result").innerText = "Error while calculating";
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById("result").innerText = "Result: " + data.result;
+        }
+    </script>
+</body>
+</html>
