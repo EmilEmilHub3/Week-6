@@ -1,0 +1,24 @@
+name: Deploy Database to Staging
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  deploy-db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Flyway migrations on staging
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/db/migrations:/flyway/sql \
+            flyway/flyway:10 \
+            -url=jdbc:mariadb://${{ secrets.STAGING_DB_HOST }}:${{ secrets.STAGING_DB_PORT }}/${{ secrets.STAGING_DB_NAME }} \
+            -user=${{ secrets.STAGING_DB_USER }} \
+            -password=${{ secrets.STAGING_DB_PASSWORD }} \
+            migrate
