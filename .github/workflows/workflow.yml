@@ -71,3 +71,32 @@ jobs:
           name: stryker-report
           path: StrykerOutput
           if-no-files-found: warn
+
+      - name: Start MariaDB
+        run: docker compose up -d mariadb
+
+      - name: Run Flyway migrations
+        run: docker compose run --rm flyway
+
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Start API
+        run: |
+          dotnet run --project Calculator.Api/Calculator.Api.csproj --urls http://127.0.0.1:8080 > api.log 2>&1 &
+
+      - name: Wait for API
+        run: |
+          for i in {1..30}; do
+            curl -s -o /dev/null -w "%{http_code}" \
+              -X POST http://127.0.0.1:8080/api/calculations \
+              -H "Content-Type: application/json" \
+              -d '{"a":1,"b":2,"operation":"add","calculatorType":"simple"}' | grep 200 && exit 0
+            sleep 2
+          done
+          echo "API did not start in time"
+          cat api.log
+          exit 1
+
+      - name: Run k6 spike test
+        run: k6 run k6/performance-spike.js
