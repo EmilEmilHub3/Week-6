@@ -9,6 +9,9 @@ jobs:
   integration:
     runs-on: ubuntu-latest
 
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,11 +23,19 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install required tools
         run: |
           dotnet tool install --global dotnet-reportgenerator-globaltool
           dotnet tool install --global dotnet-stryker
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Install TestCafe
+        run: npm install -g testcafe
 
       - name: Run unit tests (with coverage)
         continue-on-error: true
@@ -78,25 +89,17 @@ jobs:
       - name: Run Flyway migrations
         run: docker compose run --rm flyway
 
+      # ---------------------------
+      # E2E TEST (TestCafe)
+      # ---------------------------
+      - name: Run TestCafe E2E test
+        run: testcafe chrome:headless e2e/calculator.e2e.js
+
+      # ---------------------------
+      # PERFORMANCE TEST (k6)
+      # ---------------------------
       - name: Install k6
         uses: grafana/setup-k6-action@v1
-
-      - name: Start API
-        run: |
-          dotnet run --project Calculator.Api/Calculator.Api.csproj --urls http://127.0.0.1:8080 > api.log 2>&1 &
-
-      - name: Wait for API
-        run: |
-          for i in {1..30}; do
-            curl -s -o /dev/null -w "%{http_code}" \
-              -X POST http://127.0.0.1:8080/api/calculations \
-              -H "Content-Type: application/json" \
-              -d '{"a":1,"b":2,"operation":"add","calculatorType":"simple"}' | grep 200 && exit 0
-            sleep 2
-          done
-          echo "API did not start in time"
-          cat api.log
-          exit 1
 
       - name: Run k6 spike test
         run: k6 run k6/performance-spike.js
