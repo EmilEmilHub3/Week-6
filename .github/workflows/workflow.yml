@@ -97,7 +97,7 @@ jobs:
 
       # ---------------------------
       # PERFORMANCE TEST (k6)
-      # ---------------------------.
+      # ---------------------------.ff
       - name: Install k6
         uses: grafana/setup-k6-action@v1
 
