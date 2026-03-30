@@ -28,3 +28,19 @@ services:
       -user=calculatoruser
       -password=calculatorpass
       migrate
+
+  api:
+    build:
+      context: .
+      dockerfile: Calculator.Api/Dockerfile
+    container_name: calculator-api
+    restart: always
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      ConnectionStrings__DefaultConnection: Server=mariadb;Port=3306;Database=calculator;User=calculatoruser;Password=calculatorpass;
+    ports:
+      - "8080:8080"
